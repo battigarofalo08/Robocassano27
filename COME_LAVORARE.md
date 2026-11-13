@@ -75,6 +75,24 @@ italiano semplice"*, *"cosa fa questa riga?"*. E spiegatevelo a vicenda: insegna
    (una riga per FIX). Questi due file hanno la **fine riga CRLF** (Windows): in Visual Studio Code lo vedi in basso a
    destra; se c'è scritto `LF`, cliccaci e scegli `CRLF`.
 9. **Prima della pull request, prova nel simulatore** e confronta con la versione precedente (vedi sotto).
+10. **Si parte sempre dall'ULTIMA versione unita in `main`**, mai da una vecchia. Se due versioni partono dalla stessa
+    (come V46 e V47 dalla V45), la seconda non contiene la prima: il controllo automatico lo vede e la pull request
+    resta rossa (sezione 3bis).
+
+## 3bis. Lavorare come nelle aziende della Silicon Valley
+
+Dal 12/11 lavoriamo con i metodi delle grandi aziende di software. Sono le stesse cose che troverete al lavoro.
+
+| Metodo (nome inglese) | Cosa vuol dire da noi |
+|---|---|
+| **Un solo tronco** (*trunk-based development*) | `main` è la verità. Ogni versione nuova parte dall'ultima unita. Pull request piccole e frequenti, un pezzo di robot alla volta |
+| **Controllo automatico** (*CI, continuous integration*) | A ogni pull request GitHub, da solo, controlla le regole e fa girare la versione nel simulatore contro quella prima (file `.github/workflows/controllo.yml`). In fondo alla pull request: ✅ verde = si può unire, ❌ rosso = c'è da sistemare. La tabella delle gare è nella pagina **Details → Summary**. Si può lanciare anche a mano: `python3 Strumenti_prove_Claude/controlla_versione.py` e `python3 Strumenti_prove_Claude/confronta_simulatore.py` |
+| **Revisione del codice** (*code review*) | Nessuno unisce da solo il proprio lavoro: la pull request la legge e la unisce il prof (`CODEOWNERS`). Chi scrive spiega, chi rivede chiede. Ognuno lavora **con il suo account** GitHub |
+| **Interruttori** (*feature flags*) | Una funzione nuova entra con un interruttore in `ViennaDataConf.py` (es. `CAM_LINEA_AUTOTARATURA = True/False`). Se sul robot va male si spegne in 5 secondi, senza fare una versione nuova |
+| **Rilascio** (*release*) | La versione che va sul robot è sempre una versione unita e verde, mai una cartella "di prova" |
+| **Analisi senza colpe** (*blameless postmortem*) | Dopo un errore (in gara o nel lavoro) si scrive cosa è successo e quale regola lo impedirà la prossima volta, non chi ha sbagliato. Le scatole nere servono a questo |
+| **Lavagna** (*Kanban*, GitHub Projects) | Ogni issue è una scheda: Da fare → In corso → In revisione → Fatto. Tutti vedono chi fa cosa |
+| **Riunione in piedi** (*stand-up*) | A inizio laboratorio, 10 minuti: ognuno dice cosa ha fatto, cosa farà, cosa lo blocca |
 
 ## 4. Il lavoro, passo per passo
 
@@ -161,6 +179,9 @@ prova prima/dopo.
 
 ## 7. Lavorare con Claude Code
 
+> Usi ChatGPT o Claude sul sito? Incolla `ISTRUZIONI_PER_LA_IA.md` nelle istruzioni del tuo progetto: così la tua IA
+> conosce il robot e le regole della squadra.
+
 1. Ognuno ha il **suo account Claude** (piano Pro, che comprende Claude Code): mai l'account di un altro.
 2. Su claude.ai **collega il tuo account GitHub** (lo stesso con cui sei collaboratore).
 3. Apri **Claude Code**, scegli la repository `Giooooonni93/Robocassano27`. Claude legge da solo `CLAUDE.md` e conosce
@@ -193,6 +214,8 @@ un lavoro leggete il suo ultimo rapporto (`Laboratorio Shuri/SHURI_rapporto.md`)
 ## 8. Cosa NON fare
 
 - Non lavorare direttamente su `main` (è protetto: GitHub non te lo lascia fare).
+- Non unire (Merge) una pull request, nemmeno la tua: la unisce il prof dopo la revisione, con il controllo verde.
+- Non usare l'account GitHub di un altro: ognuno lavora con il suo (così la storia dice chi ha fatto cosa).
 - Non modificare le cartelle delle versioni già consegnate né i simulatori già consegnati (`ClaudeRob_Simulatore_V31`, `V32`)
   (il simulatore ha la sua numerazione: se serve cambiarlo, si fa `ClaudeRob_Simulatore_V32`).
 - Non caricare foto o video con persone riconoscibili, password o dati personali.

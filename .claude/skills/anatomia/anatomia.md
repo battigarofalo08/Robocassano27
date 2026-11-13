@@ -143,6 +143,11 @@ Foto in `immagini/foto_robot/`: `sotto.jpg`, `fianco.jpg`, `fianco_elettronica.j
   riflessi, plastica lucida scambiata per argento: scatola nera 09/11 13:00, secondo 381).
 - **Punti deboli**: luce e riflessi; i verdi in diagonale (29/10); la plastica trasparente vicino alle porte vista come
   argento (09/11).
+- **Regolazione della camera linea (V48)**: fuoco fisso a 8,3 cm (`CAM_LINEA_FUOCO_CM`), 20 FPS (`CAM_LINEA_FPS`); all'avvio del
+  programma LED accesi, esposizione bloccata e soglia del nero con Otsu (FIX 112, V46). Interruttore `CAM_LINEA_AUTOTARATURA`
+  (False = come la V47). **Lux** di tutte e due le camere ogni secondo, controllo **VISTA OK/ATTENZIONE** all'avvio, esposizione
+  della camera arena bloccata dopo l'assestamento (FIX 113, V47). Gli eventi dell'avvio sono nell'intestazione della scatola
+  nera (`avvio`) e come "AVVIO: ..." al secondo 0 (FIX 114). Campi nuovi della scatola nera: `lux`, `cam_meta`, `vista`.
 
 ---
 
@@ -205,6 +210,10 @@ Foto in `immagini/foto_robot/`: `sotto.jpg`, `fianco.jpg`, `fianco_elettronica.j
 - `Braccio(angolo)`, `Pinza(angolo)`; in `RwdFoto.py`: `AbbassaPinza`, `AlzaPinza`, `ApriPinza`, `ChiudiPinza`,
   `CaricaPalla`, `SvuotaPinza`, `ScaricaPalla(tipo)`, `AccostaTriangolo`.
 - **Scatola nera**: `br` (braccio), `pz` (pinza), `pal` (palline).
+- **Come decide la presa** (`ArenaAI`): si avvicina finché il riquadro YOLO della pallina arriva a **5500 pixel**, corregge
+  l'angolo, poi una manovra a tempo (indietro 0,5 s, pinza giù, avanti 1,1 s, chiude, indietro, carica). "Presa" o "mancata" lo
+  dice l'interruttore della pinza (`sensori['switch']`). **Punto debole** (scatola nera V46, 12/11 17:52): due palline attaccate
+  sembrano una pallina grande, i 5500 pixel arrivano troppo lontano e la pinza si chiude a vuoto (6 volte di fila).
 
 ---
 

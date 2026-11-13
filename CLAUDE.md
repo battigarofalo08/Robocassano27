@@ -12,11 +12,11 @@ Va messo nella cartella `02_Robotica` sul Mac: Claude Code legge da solo un file
 - Si scrive in **italiano**, in modo diretto e semplice (i ragazzi devono capire).
 
 ## Regole fisse (da rispettare sempre)
-1. Ogni modifica al codice del robot = **versione nuova** in una cartella nuova: `ClaudeRob_V<n>` (ultima: **V47**, ramo di lavoro).
+1. Ogni modifica al codice del robot = **versione nuova** in una cartella nuova: `ClaudeRob_V<n>` (ultima: **V48**).
    Il simulatore ha la sua numerazione: `ClaudeRob_Simulatore_V<n>` (ultimo: **V32**).
 2. **Non modificare mai** le cartelle delle versioni già consegnate: si copia l'ultima e si lavora sulla copia.
 3. I **nomi dei file** delle classi non cambiano mai (`RwdFoto.py`, `ViennaClsRobot.py`, `ViennaDataConf.py`, ...).
-4. Ogni modifica è commentata nel codice con **`[FIX n]`** (ultimo: **FIX 113**), con il motivo (di solito: quale scatola
+4. Ogni modifica è commentata nel codice con **`[FIX n]`** (ultimo: **FIX 114**), con il motivo (di solito: quale scatola
    nera, quale secondo, cosa si vede nei dati).
 5. In ogni versione aggiornare **`CHANGELOG.md`** (sezione nuova in cima + riga nella tabella delle versioni) e
    **`LEGGIMI_MODIFICHE.md`** (una riga per FIX), con **fine riga CRLF** (Windows).
@@ -43,12 +43,16 @@ Va messo nella cartella `02_Robotica` sul Mac: Claude Code legge da solo un file
   una pull request) → un'issue per pezzo (es. Battista l'altalena, Gioele l'uscita) → ognuno la sua versione, analisi della
   scatola nera, simulatore, pull request con prima/dopo → il prof controlla e unisce → chi arriva secondo si aggiorna → la
   versione nuova va sul robot. Dettagli per gli studenti in `COME_LAVORARE.md`.
-- Il repository contiene le **ultime versioni** del codice (V39-V44 come riferimento, V45), i simulatori V31 e V32, gli strumenti
+- Il repository contiene le **ultime versioni** del codice (V39-V47 come riferimento, V48), i simulatori V31 e V32, gli strumenti
   di prova, il Laboratorio Shuri (solo gli strumenti), i pezzi stampati (`Meccanica_STL/`) e alcune scatole nere recenti, con gli **stessi nomi di cartella** del Mac (così i percorsi relativi funzionano uguale). Le versioni
   vecchie (V25-V38) restano sul Mac; la loro storia è nel `CHANGELOG.md`.
-- V47 è stata preparata su un ramo separato partendo dalla V45, mentre Battista lavora sulla V46. Se la V46 viene unita per prima,
-  la V47 va rifatta partendo dalla versione appena unita, rimettendo il FIX 113 e ripetendo le prove. Non modificare mai le cartelle
-  delle versioni precedenti.
+- **Come nelle aziende (dal 12/11, dopo V46 e V47 partite tutte e due dalla V45 e unite senza aggiornarsi)**: sezione 3bis di
+  `COME_LAVORARE.md`. **Controllo automatico** a ogni pull request (`.github/workflows/controllo.yml`):
+  `Strumenti_prove_Claude/controlla_versione.py` (compila con Python 3.11, VERSIONE = cartella, **contiene tutti i FIX delle
+  altre versioni**, CHANGELOG/LEGGIMI in CRLF, nessuna versione già unita toccata; stampa l'impronta) e
+  `Strumenti_prove_Claude/confronta_simulatore.py` (scuola_nuova 1-2, scuola 1, rcj2026 1, contro la versione prima,
+  "identiche"/"diverse"; rosso solo con un errore Python). Prima di una pull request Claude li lancia tutti e due.
+  `.github/CODEOWNERS` (approva il prof). Funzioni nuove con un **interruttore** in `ViennaDataConf.py`.
 - Le scatole nere nuove vanno in `ScatoleNere/`. File rigenerabili (replay, zip, `__pycache__`) esclusi da `.gitignore`.
 
 ## Cartelle
@@ -103,7 +107,7 @@ Va messo nella cartella `02_Robotica` sul Mac: Claude Code legge da solo un file
   lato corto accanto al triangolo rosso; i triangoli (rosso e verde) vengono spostati tra le prove; c'è una parete a
   destra di una parte della pista e un'altalena dopo l'uscita.
 
-## Il codice (ClaudeRob_V47, ramo `v47-gioele-lux-camera-check`, basata su V45; V45 impronta c6bb6bcc58a393e3; V44: a0669f32449f6c26; V43: 166f805b56cee80a; V42: ebaf44adfcfb2e81; V41: 7fa6d06745b2776b; V40: dcd59068b49486ac; V39: 9ef3d48e550bc741)
+## Il codice (ClaudeRob_V48, impronta 2be0cb5b232b454e; V47: 5dde2b42d0fdd213; V46: c87470334e619b43; V45: c6bb6bcc58a393e3; V44: a0669f32449f6c26; V43: 166f805b56cee80a; V42: ebaf44adfcfb2e81; V41: 7fa6d06745b2776b; V40: dcd59068b49486ac; V39: 9ef3d48e550bc741)
 - `RwdFoto.py` – programma di gara (~4500 righe): seguilinea `InseguitoreIA`, verdi e incroci, ostacolo, ingresso
   (`TrovaIngressoArena`, `DirezioneIngresso`, `CentraSullIngresso`, `EntraDallaPorta`), palline (`ArenaAI`), uscita
   (`TrovaUscitaArena` → `AvvicinatiAlMuro` / `GiroDeiMuri` / `SeguiParete` / `EsciDallaPortaDavanti` /
@@ -199,7 +203,15 @@ Va messo nella cartella `02_Robotica` sul Mac: Claude Code legge da solo un file
 - **V45** (12/11) FIX 111: niente "ingresso" in mezzo alla pista: prima di entrare il laser davanti (letture vere) deve vedere
   l'arena entro `ARGENTO_FRONTE_MAX_CM` (150 cm). Scatola nera 12/11 10:09, 93-103 s: falso argento, 166 cm, discesa di 28°.
   Sui dati veri: 15 ingressi veri su 15 entrano, il falso è annullato. `ARGENTO_DOPO_S` (spento) per il tempo minimo.
+- **V46** (12/11, issue #28, Battista) FIX 112: camera linea a fuoco fisso (8,3 cm), 20 FPS, all'avvio del programma LED accesi,
+  esposizione bloccata e soglia del nero con Otsu (60-170). Partita dalla V45, unita senza la V47. Anche un tema grafico "MS-DOS"
+  (cabina, pannello, TaraNero), non portato nella V48.
 - **V47** (12/11, issue #29) FIX 113: metadati Lux/ExposureTime/AnalogueGain ogni secondo; valori nella scatola nera e nella cabina; controllo vista all'avvio informativo; autoesposizione arena durante l'assestamento e tentativo di blocco. Soglie e strategia esposizione ancora da tarare sul robot.
+- **V48** (12/11) FIX 114: **unione di V46 e V47** (partivano tutte e due dalla V45). Dalla V47 + il FIX 112 della V46 con un
+  interruttore `CAM_LINEA_AUTOTARATURA` (False = taratura della V45/V47); il controllo VISTA parte dopo la taratura della camera
+  linea (`Monitor.controlli_avvio()`); gli eventi dell'avvio vanno nell'intestazione della scatola nera (`avvio`) e come
+  "AVVIO: ..." al secondo 0 della run (nella scatola nera V46 mancava la soglia Otsu); riserva = `taratura_nero.json`;
+  `TaraNero.py` con fuoco e FPS della gara. Niente tema DOS. Simulatore: identica alla V47 (4 gare, campione per campione).
 
 ## Com'è andata sul robot vero
 - 12/11 10:09 (**V43**): percorso completo, 3 vittime, uscita in 10 s, altalena, linea rossa a 547 s; **8 LoP**, una sola scatola nera
@@ -211,12 +223,20 @@ Va messo nella cartella `02_Robotica` sul Mac: Claude Code legge da solo un file
 - 9/11 10:46 (**V40**, prima gara dalla cartella pulita, impronta giusta): percorso completo, **arrivo a 388 s**, 3 vittime su 3,
   **uscita in 64 s** (V39 FIX 104 funziona), **altalena superata** (riconosciuta, raddrizzata di 27 gradi, linea ritrovata, linea
   rossa 5 s dopo). Ingresso lento: 4 falsi "non avanzo" (123-171 s, 48 s persi) → FIX 106 (V41).
+- 12/11 15:58 (**V47**): arrivo a 580 s, **8 LoP** (rotonda 2, linea persa 3, falso ingresso contro il muro, ingresso), palline
+  3/3 al primo colpo, uscita 103 s, VISTA OK, lux linea 1100-6400, arena bloccata a 11,9 ms. Altalena: inclinato -62°.
+- 12/11 17:52 (**V46**): arrivo a **519 s**, **4 LoP**, uscita 49 s; **6 prese mancate** (232-303 s): le due palline argento
+  attaccate contro il triangolo rosso, YOLO le vede come una sola grande (area 5500 raggiunta troppo lontano, centro y 91-98
+  invece di 121-131) → la pinza si chiude a vuoto; codice dell'arena uguale in V45-V48. Altalena: -61°, girato di -114°, LoP.
 - Il prof: l'ingresso "funziona sempre" (dalla V37), ma "usciva in retromarcia" (9/11). La V41 **non è ancora stata provata**.
 
 ## Aperto / da fare
 - **V47 / FIX 113 – collaudo sul robot:** misurare Lux, ExposureTime e AnalogueGain di entrambe le camere con luci normali, luci spente e torcia; coprire una camera alla volta; verificare VISTA OK/ATTENZIONE, scatola nera e moviola. Le soglie attuali sono provvisorie.
 - **Esposizione camera arena:** decidere dopo le misure reali se mantenere l'autoesposizione, bloccarla dopo l'assestamento o impostare un valore fisso. Non considerare la scelta definitiva prima delle prove.
-- **V47 e V46:** la V47 attuale parte dalla V45; quando la V46 di Battista sarà unita, rifare la V47 partendo dalla versione unita e ripetere i test, secondo la regola per chi arriva secondo.
+- **V48 sul robot**: impronta `2be0cb5b232b454e`; nella scatola nera all'inizio "AVVIO: CAMERA LINEA: soglia ..." e "AVVIO: VISTA OK".
+  Se il seguilinea va peggio della V47: `CAM_LINEA_AUTOTARATURA = False`.
+- **Due palline vicine** viste come una sola (scatola nera V46 17:52): riquadro largo → puntare a una pallina sola. Versione nuova.
+- **Gioele: issue #34 diventa la V49**, partendo dalla V48.
 1. **Provare la V45 sul robot vero** (copiarla in `~/ClaudeRob_V45`, modelli, `chmod +x avvia.sh` se serve, impronta
    `c6bb6bcc58a393e3`, poi `ln -sfn ~/ClaudeRob_V45 ~/ClaudeRob_GARA`): l'ingresso non deve più tornare indietro con la porta aperta davanti (FIX 106);
    in VNC ingrandire il terminale ad almeno 100 x 38 per la cabina (FIX 107).

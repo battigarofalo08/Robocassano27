@@ -1,0 +1,3 @@
+# CODEOWNERS: chi deve approvare le pull request (revisione del codice, come nelle aziende).
+# Il codice del robot, il simulatore e le regole della squadra li approva il prof.
+* @Giooooonni93

@@ -1,0 +1,57 @@
+# IL CONTROLLO AUTOMATICO (CI, "integrazione continua") della squadra RoboCassano.
+# A ogni pull request verso main GitHub, da solo, su un computer suo:
+#   1. controlla le regole della squadra sulla versione nuova (Strumenti_prove_Claude/controlla_versione.py):
+#      compila, VERSIONE giusta, contiene TUTTI i FIX delle versioni già unite, CHANGELOG/LEGGIMI in CRLF,
+#      niente modifiche alle versioni già unite;
+#   2. la fa girare nel simulatore contro la versione prima (Strumenti_prove_Claude/confronta_simulatore.py).
+# Il risultato compare in fondo alla pull request (verde = OK, rosso = c'è da sistemare) e la tabella nella
+# pagina "Summary" del controllo. Con la regola "Require status checks" su main il Merge si fa solo col verde.
+name: Controllo versione
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regole:
+    name: Regole della squadra
+    runs-on: ubuntu-latest
+    outputs:
+      versione: ${{ steps.quale.outputs.versione }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Quale versione controllo
+        id: quale
+        run: |
+          BASE="origin/${{ github.base_ref || 'main' }}"
+          # la cartella ClaudeRob_V<n> più alta toccata dalla pull request (se nessuna: la più alta del repository)
+          V=$(git diff --name-only "$BASE"...HEAD | grep -o '^ClaudeRob_V[0-9]*/' | sort -t V -k2 -n | uniq | tail -1 | tr -d /)
+          [ -z "$V" ] && V=$(ls -d ClaudeRob_V[0-9]* | sort -t V -k2 -n | tail -1)
+          echo "versione=$V" >> "$GITHUB_OUTPUT"
+          echo "Versione da controllare: $V"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Controllo delle regole
+        run: python3 Strumenti_prove_Claude/controlla_versione.py "${{ steps.quale.outputs.versione }}" --base "origin/${{ github.base_ref || 'main' }}"
+
+  simulatore:
+    name: Prova nel simulatore
+    runs-on: ubuntu-latest
+    needs: regole
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Librerie del simulatore
+        run: pip install numpy opencv-python-headless
+      - name: Gare nel simulatore (nuova contro precedente)
+        run: python3 Strumenti_prove_Claude/confronta_simulatore.py "${{ needs.regole.outputs.versione }}"
